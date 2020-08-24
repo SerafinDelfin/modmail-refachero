@@ -2,9 +2,10 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const config = require("./config.json");
 const prefix = config.prefix;
-const server = client.guilds.cache.get(config.bot_server);
+let server;
 
 client.on("ready", ready => {
+    server = client.guilds.cache.get(config.bot_server);
     console.log(`Bot ${client.user.tag} encendido`)
 })
 
@@ -35,21 +36,34 @@ client.on('message', message => {
                 contact_channel.send(`${message.author.tag}: \`\`\`${message.content}\`\`\``)
 
         }
-    }
 
     if (message.channel.type === "text") {
-        if (message.channel.parentID !== config.categoria) return;
-        else {
-            var user = server.members.cache.get(message.channel.name)
-            if (config.MD_emulado === true) {
+  
+        if (message.channel.parentID === config.categoria) 
+          
+         {
+                
+          let user = server.members.cache.get(message.channel.name);
+    
+          if(!user)
+            
+            user = server.members.fetch(message.channel.name);
+            
+                      
+            if (config.MD_emulado) 
+              
                 user.send(message.content)
-            } else {
-                if (message.content.startsWith(`${prefix}reply`)) {
-                    user.send(`${message.author.tag}: \`\`\`${args.slice(1).join(" ")}\`\`\``)
-                } else return
-            }
+              
+            
+						
+          	if (message.content.startsWith(`${prefix}reply`)) 
+                  
+                user.send(`${message.author.tag}: \`\`\`${args.slice(1).join(" ")}\`\`\``)
+            
         }
     
-})
+    }
+  }
+ )
 
 client.login(config.token)
